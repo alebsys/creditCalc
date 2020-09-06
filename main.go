@@ -8,7 +8,9 @@ import (
 	"text/tabwriter"
 )
 
-var creditSum, creditTerm, creditPercent float64
+var creditSum, creditTerm, creditPercent, dosro4kaSum float64
+var dosro4kaMonth int
+var answerDosr string
 var dosro4ka = make(map[int]float64)
 
 func main() {
@@ -19,7 +21,26 @@ func main() {
 
 	flag.Parse()
 
-	// creditSum, creditTerm, creditPercent = question()
+	fmt.Println("Будет ли досрочка?(да/нет)")
+	fmt.Scanf("%v", &answerDosr)
+
+	if answerDosr == "да" {
+
+		for answerDosr != "нет" {
+
+			fmt.Println("Введите число месяца")
+			fmt.Scanf("%d", &dosro4kaMonth)
+			fmt.Println("и сумму досрочного погашения")
+			fmt.Scanf("%f", &dosro4kaSum)
+
+			dosro4ka[dosro4kaMonth] = dosro4kaSum
+
+			fmt.Println("Будут ли еще досрочные платежи?(да/нет)")
+
+			fmt.Scanf("%v", &answerDosr)
+
+		}
+	}
 
 	answer(*creditSumPtr, *creditTermPtr, *creditPercentPtr)
 
@@ -68,7 +89,7 @@ func answer(cs, ct, cp float64) {
 	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s", "Месяцы", "Ежемесячный платеж", "Погашение процентов", "Погашение тела кредита", "Долг на конец месяца")
 	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s", "--------", "--------", "--------", "--------", "--------")
 
-	dosro4ka[50] = 10000
+	// dosro4ka[4] = 10000
 
 	payMonth := annuityPay(cs, ct, cp)
 
@@ -86,6 +107,6 @@ func answer(cs, ct, cp float64) {
 			cs = cs - payTelo
 		}
 
-		fmt.Fprintf(w, "\n %d\t%.0f\t%.0f\t%.0f\t%.0f\t", i, payMonth, percAnnuity, payTelo, cs)
+		fmt.Fprintf(w, "\n %d\t%.2f\t%.2f\t%.2f\t%.2f\t", i, payMonth, percAnnuity, payTelo, cs)
 	}
 }

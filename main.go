@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math"
 	"os"
@@ -8,13 +9,19 @@ import (
 )
 
 var creditSum, creditTerm, creditPercent float64
+var dosro4ka = make(map[int]float64)
 
 func main() {
 
-	creditSum, creditTerm, creditPercent = question()
-	payMonth := annuityPay(creditSum, creditTerm, creditPercent)
-	overPay := totalAmount(creditSum, payMonth, creditTerm)
-	answer(payMonth, overPay, creditSum, creditTerm, creditPercent)
+	creditSumPtr := flag.Float64("sum", 0, "Credit sum")
+	creditTermPtr := flag.Float64("period", 0, "Credit period in month")
+	creditPercentPtr := flag.Float64("percent", 0, "Annual credit interest")
+
+	flag.Parse()
+
+	// creditSum, creditTerm, creditPercent = question()
+
+	answer(*creditSumPtr, *creditTermPtr, *creditPercentPtr)
 
 }
 
@@ -49,7 +56,7 @@ func totalAmount(cs, pm, ct float64) float64 {
 }
 
 // Функция выводит на экран результат
-func answer(pm, op, cs, ct, cp float64) {
+func answer(cs, ct, cp float64) {
 
 	w := new(tabwriter.Writer)
 
@@ -61,11 +68,24 @@ func answer(pm, op, cs, ct, cp float64) {
 	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s", "Месяцы", "Ежемесячный платеж", "Погашение процентов", "Погашение тела кредита", "Долг на конец месяца")
 	fmt.Fprintf(w, "\n %s\t%s\t%s\t%s\t%s", "--------", "--------", "--------", "--------", "--------")
 
-	for i := 1; i <= int(ct); i++ {
-		percAnnuity := creditSum * creditPercent / 100 / 12
-		payTelo := pm - percAnnuity
-		creditSum = creditSum - payTelo
+	dosro4ka[50] = 10000
 
-		fmt.Fprintf(w, "\n %d\t%.0f\t%.0f\t%.0f\t%.0f\t", i, pm, percAnnuity, payTelo, creditSum)
+	payMonth := annuityPay(cs, ct, cp)
+
+	for i := 1; cs >= 0; i++ {
+
+		// overPay := totalAmount(creditSum, payMonth, creditTerm)
+
+		percAnnuity := cs * cp / 100 / 12
+		payTelo := payMonth - percAnnuity
+
+		if dosro4ka[i] > 0 {
+			cs = cs - payTelo - dosro4ka[i]
+			payMonth = annuityPay(cs, ct-float64(i), cp)
+		} else {
+			cs = cs - payTelo
+		}
+
+		fmt.Fprintf(w, "\n %d\t%.0f\t%.0f\t%.0f\t%.0f\t", i, payMonth, percAnnuity, payTelo, cs)
 	}
 }

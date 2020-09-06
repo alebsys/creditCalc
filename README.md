@@ -12,3 +12,10 @@
 ## Формулы расчета кредита
 
 * Формулы были взяты с https://temabiz.com/finterminy/ap-formula-i-raschet-annuitetnogo-platezha.html
+
+## RoadMap
+
+* Добавить help
+* Добавить флаги cli
+* Добавить функционал досрочного погашения
+* 
